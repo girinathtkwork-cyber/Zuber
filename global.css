@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* on importing this 
+you are basically telling Tailwind:
+Load all Tailwind styles into the project */

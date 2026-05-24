@@ -1,0 +1,9 @@
+You write Tailwind classes
+        ↓
+Babel transforms className
+        ↓
+Tailwind generates styles
+        ↓
+Metro bundles everything
+        ↓
+React Native renders the UI
