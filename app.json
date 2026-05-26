@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Uber",
+    "name": "Zuber",
     "slug": "uber",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,11 +23,16 @@
       "package": "com.t_k_girinath.uber"
     },
     "web": {
-      "output": "static",
+      "output": "server",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
+      [
+        "expo-router",
+        {
+          "origin": "https://zuber.com/"
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -36,8 +41,7 @@
           "resizeMode": "cover",
           "backgroundColor": "#3375F5"
         }
-      ],
-      "expo-secure-store"
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

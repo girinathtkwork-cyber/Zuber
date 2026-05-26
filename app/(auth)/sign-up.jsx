@@ -3,8 +3,15 @@ import InputField from "@/components/InputField";
 import OAuth from "@/components/OAuth";
 import { icons, images } from "@/constants";
 import { Link, router } from "expo-router";
-import React, { useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { useState } from "react";
+import { Alert, Image, ScrollView, Text, View } from "react-native";
+
+// 1. Import your config and auth function
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebaseConfig";
+
+// Importing fetchAPI
+import { fetchAPI } from "../../lib/fetch";
 
 const SignUp = () => {
   const [form, setForm] = useState({
@@ -12,9 +19,44 @@ const SignUp = () => {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
-  const onSignUpPress = () => {
-    
+  // 2. Implement the functional registration logic
+  const onSignUpPress = async () => {
+    if (!form.email || !form.password) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        form.email,
+        form.password,
+      );
+
+      const user = userCredential.user;
+
+      //Calling the API ( Important part )
+      await fetchAPI("/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          firebase_uid: user.uid,
+        }),
+      });
+
+      router.replace("/(root)/(tabs)/home");
+    } catch (error) {
+      Alert.alert("Sign Up Failed", error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,9 +106,10 @@ const SignUp = () => {
           />
 
           <CustomButton
-            title="Sign Up"
+            title={loading ? "Registering..." : "Sign Up"}
             onPress={onSignUpPress}
             className="mt-6"
+            disabled={loading}
           />
 
           <OAuth />

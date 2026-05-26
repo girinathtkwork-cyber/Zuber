@@ -3,17 +3,36 @@ import InputField from "@/components/InputField";
 import OAuth from "@/components/OAuth";
 import { icons, images } from "@/constants";
 import { Link, router } from "expo-router";
-import React, { useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { useState } from "react";
+import { Alert, Image, ScrollView, Text, View } from "react-native";
+
+// 1. Import your config and auth function
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebaseConfig";
 
 const SignIn = () => {
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
-  const onSignInPress = () => {
-    
+  // 2. Implement the operational login logic
+  const onSignInPress = async () => {
+    if (!form.email || !form.password) {
+      Alert.alert("Error", "Please enter your email and password");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, form.email, form.password);
+      router.replace("/(root)/(tabs)/home");
+    } catch (error) {
+      Alert.alert("Login Failed", error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -55,9 +74,10 @@ const SignIn = () => {
           />
 
           <CustomButton
-            title="Sign In"
+            title={loading ? "Signing In..." : "Sign In"}
             onPress={onSignInPress}
             className="mt-6"
+            disabled={loading}
           />
 
           <OAuth />
